@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class PrintScriptManagerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(PrintScriptManagerApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(PrintScriptManagerApplication.class, args);
+  }
 }
