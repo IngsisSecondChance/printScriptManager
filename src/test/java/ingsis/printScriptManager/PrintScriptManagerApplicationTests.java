@@ -12,16 +12,15 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest
 class PrintScriptManagerApplicationTests {
 
-	@Container
-	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
+  @Container static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16");
 
-	@DynamicPropertySource
-	static void overrideProps(DynamicPropertyRegistry r) {
-		r.add("spring.datasource.url", postgres::getJdbcUrl);
-		r.add("spring.datasource.username", postgres::getUsername);
-		r.add("spring.datasource.password", postgres::getPassword);
-	}
+  @DynamicPropertySource
+  static void overrideProps(DynamicPropertyRegistry r) {
+    r.add("spring.datasource.url", postgres::getJdbcUrl);
+    r.add("spring.datasource.username", postgres::getUsername);
+    r.add("spring.datasource.password", postgres::getPassword);
+  }
 
-	@Test
-	void contextLoads() {}
+  @Test
+  void contextLoads() {}
 }
