@@ -2,35 +2,38 @@
 FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
 
-# Copiamos Gradle wrapper y archivos de construcción primero para cachear dependencias
+# Copiamos wrapper + config primero (cache de dependencias)
 COPY gradlew gradlew
 COPY gradle gradle
 COPY settings.gradle.kts settings.gradle.kts
 COPY build.gradle.kts build.gradle.kts
 
-# Descargamos dependencias (sin código todavía para aprovechar cache)
+# Permisos para el wrapper
+RUN chmod +x gradlew
+
+# Pre-descarga de dependencias (sin código aún para cachear)
 RUN ./gradlew --no-daemon dependencies || true
 
-# Ahora sí copiamos el código fuente
+# Ahora sí el código
 COPY src src
 
-# Construimos el JAR sin correr tests (tests ya corren en CI)
+# Construcción del JAR (sin tests si ya corren en CI)
 RUN ./gradlew --no-daemon clean bootJar -x test
 
 # ========== Runtime stage ==========
 FROM eclipse-temurin:17-jre AS runtime
 WORKDIR /app
 
-# (opcional) usuario no-root
+# Usuario no-root (opcional)
 RUN useradd -r -s /bin/false appuser
 
-# Copiamos el jar generado desde la stage build
+# Copiamos el jar generado
 COPY --from=build /app/build/libs/*.jar app.jar
 
-# Exponemos el puerto interno de Spring (afuera lo mapea compose)
-EXPOSE 8080
+# Puerto interno (ajustá si tu app escucha en otro)
+EXPOSE 8081
 
-# Variables por defecto (se pueden overridear en compose)
+# Perfil por defecto (si usás perfiles)
 ENV SPRING_PROFILES_ACTIVE=docker
 
 USER appuser
